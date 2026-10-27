@@ -86,12 +86,15 @@ function Install-ToolVersion($P, [string]$Version) {
     try {
         Write-Note "  $($artifact.Url)"
         Save-Url $artifact.Url $archive -Progress
-        if ($artifact.Sha256) {
-            $actual = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash
-            if ($actual -ne $artifact.Sha256) {
-                throw "checksum mismatch for $($artifact.FileName): expected $($artifact.Sha256), got $actual. The download was discarded."
+        $algo = 'SHA256'
+        $expected = $artifact.Sha256
+        if ($artifact.Sha512) { $algo = 'SHA512'; $expected = $artifact.Sha512 }
+        if ($expected) {
+            $actual = (Get-FileHash -LiteralPath $archive -Algorithm $algo).Hash
+            if ($actual -ne $expected) {
+                throw "checksum mismatch for $($artifact.FileName): expected $expected, got $actual. The download was discarded."
             }
-            Write-Note '  SHA256 checksum ok'
+            Write-Note "  $algo checksum ok"
         } else {
             Write-Warn "no checksum available for $($artifact.FileName); it was not verified"
         }

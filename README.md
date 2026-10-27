@@ -10,7 +10,7 @@ at work i'm on windows, and the company antivirus scans every binary that runs. 
 
 so yuri is plain powershell 5.1, the one that already ships with windows. nothing compiled, nothing for the antivirus to stop and look at, and nothing running when a terminal opens. switching versions is global: change it in one terminal and every terminal sees it right away.
 
-node is the only tool for now, but the core doesn't know anything about node. a new tool is one provider file.
+node and python are the tools for now, but the core doesn't know anything about either. a new tool is one provider file.
 
 this is a fix for my own setup, not a product.
 
@@ -20,7 +20,7 @@ this is a fix for my own setup, not a product.
 
 - windows 10 1803 or later, for the built-in `curl.exe` and `tar.exe`
 - local admin, once, for the setup
-- direct internet access to nodejs.org, proxies aren't supported yet
+- direct internet access to nodejs.org and nuget.org, proxies aren't supported yet
 - no group policy forcing the execution policy to `AllSigned` or `Restricted`, check with `Get-ExecutionPolicy -List`
 
 ---
@@ -58,7 +58,8 @@ to update, `git pull` and run `install.ps1` again. installed versions are kept.
 | ----------------------------- | ------------------------------------------------ |
 | `yuri use node`               | latest lts, installs it if needed                |
 | `yuri use node@22`            | newest installed 22.x, otherwise newest published |
-| `yuri use`                    | reads `.node-version` or `.nvmrc`                |
+| `yuri use`                    | reads `.node-version`, `.nvmrc` or `.python-version` |
+| `yuri use python@3.12`        | newest installed 3.12.x, otherwise newest published |
 | `yuri install node@22`        | newest published 22.x                            |
 | `yuri list`                   | installed versions (`*` = active)                |
 | `yuri ls-remote node@lts`     | versions available for download                  |
@@ -89,6 +90,8 @@ C:\yuri\
 `yuri use` only repoints the `current\node` junction. no hook in `$PROFILE`, nothing runs when a terminal opens.
 
 node comes from the official zip at https://nodejs.org/dist, checked against `SHASUMS256.txt`. npm comes with it, and global packages (`npm i -g`) go into the version's own folder, so every version has its own.
+
+python comes from the python.org NuGet package (a full install, pip and venv included), checked against the SHA512 that nuget.org publishes. `python -m pip install` goes into the version's own folder. only `python.exe` is in PATH, not `Scripts`, so run tools as `python -m <tool>`. `latest` skips pre-releases.
 
 > `YURI_HOME` is for testing only. it makes yuri keep installs in another folder, but the PATH still points to `C:\yuri\current\node`, so the `node` in your terminal doesn't change.
 

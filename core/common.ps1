@@ -4,7 +4,8 @@ $script:YuriVersion = '0.1.0'
 $script:YuriProviders = [ordered]@{}
 
 # Provider contract.
-#   Required: Name, Executable, ListRemote, GetArtifact
+#   Required: Name, Executable, ListRemote, GetArtifact (returns Url, FileName
+#             and Sha256 or Sha512)
 #   Optional: BinSubdir, DefaultSpec, VersionFiles, SpecExamples,
 #             ResolveNamed, PostInstall, Doctor
 function Register-YuriProvider {
